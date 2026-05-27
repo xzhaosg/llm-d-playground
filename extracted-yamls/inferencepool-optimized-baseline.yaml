@@ -1,0 +1,26 @@
+apiVersion: inference.networking.k8s.io/v1
+kind: InferencePool
+metadata:
+  annotations:
+    meta.helm.sh/release-name: optimized-baseline
+    meta.helm.sh/release-namespace: llm-d-optimized-baseline
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: optimized-baseline-epp
+    app.kubernetes.io/version: v1.5.0
+  name: optimized-baseline
+  namespace: llm-d-optimized-baseline
+spec:
+  appProtocol: http
+  endpointPickerRef:
+    failureMode: FailOpen
+    group: ''
+    kind: Service
+    name: optimized-baseline-epp
+    port:
+      number: 9002
+  selector:
+    matchLabels:
+      llm-d.ai/guide: optimized-baseline
+  targetPorts:
+  - number: 8000

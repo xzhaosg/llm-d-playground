@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    networking.gke.io/inference-extension-failure-mode: FailOpen
+    networking.gke.io/inference-extension-port-number: '9002'
+    networking.gke.io/inference-extension-ref-group: ''
+    networking.gke.io/inference-extension-ref-kind: Service
+    networking.gke.io/inference-extension-ref-name: optimized-baseline-epp
+  labels:
+    networking.gke.io/inference-pool-group: inference.networking.k8s.io
+    networking.gke.io/inference-pool-name: optimized-baseline
+  name: optimized-baseline-ips-5790737e
+  namespace: llm-d-optimized-baseline
+spec:
+  ports:
+  - appProtocol: http
+    name: target-port-8000
+    port: 54321
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    llm-d.ai/guide: optimized-baseline
+  sessionAffinity: None
+  type: ClusterIP

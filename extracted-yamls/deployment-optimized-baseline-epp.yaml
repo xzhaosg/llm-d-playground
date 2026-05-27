@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    autopilot.gke.io/resource-adjustment: '{"input":{"containers":[{"limits":{"memory":"16Gi"},"requests":{"cpu":"4","memory":"8Gi"},"name":"epp"}]},"output":{"containers":[{"limits":{"ephemeral-storage":"1Gi","memory":"16Gi"},"requests":{"cpu":"4","ephemeral-storage":"1Gi","memory":"8Gi"},"name":"epp"}]},"computeClassAtAdmission":"Default","modified":true}'
+    autopilot.gke.io/warden-version: 35.26.4-gke.2
+    deployment.kubernetes.io/revision: '1'
+    meta.helm.sh/release-name: optimized-baseline
+    meta.helm.sh/release-namespace: llm-d-optimized-baseline
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: optimized-baseline-epp
+    app.kubernetes.io/version: v1.5.0
+    inference.networking.k8s.io/igw-mode: inferencepool
+  name: optimized-baseline-epp
+  namespace: llm-d-optimized-baseline
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      inferencepool: optimized-baseline-epp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        inference.networking.k8s.io/igw-mode: inferencepool
+        inferencepool: optimized-baseline-epp
+    spec:
+      containers:
+      - args:
+        - --pool-name
+        - optimized-baseline
+        - --pool-namespace
+        - llm-d-optimized-baseline
+        - --pool-group
+        - inference.networking.k8s.io
+        - --zap-encoder
+        - json
+        - --config-file
+        - /config/optimized-baseline-plugins.yaml
+        - --v
+        - '2'
+        - --tracing=false
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        image: ghcr.io/llm-d/llm-d-inference-scheduler:v0.8.0
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          grpc:
+            port: 9003
+            service: inference-extension
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: epp
+        ports:
+        - containerPort: 9002
+          name: grpc
+          protocol: TCP
+        - containerPort: 9003
+          name: grpc-health
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          grpc:
+            port: 9003
+            service: inference-extension
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            ephemeral-storage: 1Gi
+            memory: 16Gi
+          requests:
+            cpu: '4'
+            ephemeral-storage: 1Gi
+            memory: 8Gi
+        securityContext:
+          capabilities:
+            drop:
+            - NET_RAW
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /config
+          name: plugins-config-volume
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccount: optimized-baseline-epp
+      serviceAccountName: optimized-baseline-epp
+      terminationGracePeriodSeconds: 130
+      tolerations:
+      - effect: NoSchedule
+        key: kubernetes.io/arch
+        operator: Equal
+        value: amd64
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: optimized-baseline-epp
+        name: plugins-config-volume

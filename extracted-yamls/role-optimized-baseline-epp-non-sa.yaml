@@ -1,0 +1,30 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    meta.helm.sh/release-name: optimized-baseline
+    meta.helm.sh/release-namespace: llm-d-optimized-baseline
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: optimized-baseline-epp
+    app.kubernetes.io/version: v1.5.0
+  name: optimized-baseline-epp-non-sa
+  namespace: llm-d-optimized-baseline
+rules:
+- apiGroups:
+  - inference.networking.x-k8s.io
+  resources:
+  - inferenceobjectives
+  - inferencemodelrewrites
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - inference.networking.k8s.io
+  resources:
+  - inferencepools
+  verbs:
+  - get
+  - watch
+  - list

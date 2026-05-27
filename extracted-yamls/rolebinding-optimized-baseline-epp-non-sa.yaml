@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    meta.helm.sh/release-name: optimized-baseline
+    meta.helm.sh/release-namespace: llm-d-optimized-baseline
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: optimized-baseline-epp-non-sa
+  namespace: llm-d-optimized-baseline
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: optimized-baseline-epp-non-sa
+subjects:
+- kind: ServiceAccount
+  name: optimized-baseline-epp
+  namespace: llm-d-optimized-baseline

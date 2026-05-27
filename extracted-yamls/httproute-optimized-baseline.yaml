@@ -1,0 +1,25 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    meta.helm.sh/release-name: optimized-baseline
+    meta.helm.sh/release-namespace: llm-d-optimized-baseline
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: optimized-baseline
+  namespace: llm-d-optimized-baseline
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: llm-d-inference-gateway
+  rules:
+  - backendRefs:
+    - group: inference.networking.k8s.io
+      kind: InferencePool
+      name: optimized-baseline
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
