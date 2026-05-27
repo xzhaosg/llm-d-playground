@@ -7,7 +7,7 @@ metadata:
     llm-d.ai/accelerator-variant: gpu
     llm-d.ai/accelerator-vendor: nvidia
     llm-d.ai/guide: optimized-baseline
-    llm-d.ai/model: Qwen3-32B
+    llm-d.ai/model: Qwen3-4B
     llm-d.ai/role: decode
   name: optimized-baseline-nvidia-gpu-vllm-decode
   namespace: llm-d-optimized-baseline
@@ -20,7 +20,7 @@ spec:
       llm-d.ai/accelerator-variant: gpu
       llm-d.ai/accelerator-vendor: nvidia
       llm-d.ai/guide: optimized-baseline
-      llm-d.ai/model: Qwen3-32B
+      llm-d.ai/model: Qwen3-4B
       llm-d.ai/role: decode
   strategy:
     rollingUpdate:
@@ -35,7 +35,7 @@ spec:
         llm-d.ai/accelerator-variant: gpu
         llm-d.ai/accelerator-vendor: nvidia
         llm-d.ai/guide: optimized-baseline
-        llm-d.ai/model: Qwen3-32B
+        llm-d.ai/model: Qwen3-4B
         llm-d.ai/role: decode
     spec:
       containers:
